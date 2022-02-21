@@ -12,10 +12,11 @@ import {
     ENDPOINT_NAME,
   } from '@oyster/common';
 
-import * as webnft from 'web/src/actions/nft';
+// import * as webnft from 'web/src/actions/nft';
 // import {mintNFT} from '@metaplex/cli/src/commands/mint-nft'
 // import { mintNFT } from '../dist/cli/src/commands/mint-nft.js'
 // import {mintNFT} from '../../web/src/actions/nft'
+import {mintNFT} from './actions/nft.js'
 import { AuctionManager, Store } from '@metaplex-foundation/mpl-metaplex';
 import {Uses, UseMethod } from '@metaplex-foundation/mpl-token-metadata';
 import { PublicKey } from '@solana/web3.js';
@@ -128,7 +129,7 @@ export async function createNftLotRequest(eventId: number,
     log.debug(`metadata ${metadataJson}`);
     const metadataUri = await storeMetadata(ticketName, eventId, metadataJson);
 
-    const mintResponse = await webnft.mintNFT(solConnection,wallet,getEndpointName(targetEnv),[],metadadata,null, quantity);
+    const mintResponse = await mintNFT(solConnection,wallet,getEndpointName(targetEnv),[],metadadata,null, quantity);
 
     // const uses: Uses = {
     //     useMethod: UseMethod.Single,

@@ -1,6 +1,10 @@
 {
   "name": "web",
   "version": "0.1.0",
+  "exports": {
+    ".": "./dist",
+    "./dist/*": "./dist/*.js"
+  },
   "dependencies": {
     "@ant-design/icons": "^4.4.0",
     "@babel/preset-typescript": "^7.12.13",

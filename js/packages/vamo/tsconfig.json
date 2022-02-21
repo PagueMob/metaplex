@@ -26,17 +26,19 @@
 
   {
     "compilerOptions": {
-        "module": "es6",
+        // "module": "es6",
+        "module": "esnext",
         "esModuleInterop": true,
         "skipLibCheck": true,
         "target": "es6",
         "jsx": "react",
         "moduleResolution": "node",
         "sourceMap": true,
+        "lib": ["dom", "dom.iterable", "esnext"],    
         "baseUrl": "src",
         "outDir": "dist"
     },
-    "lib": ["es6"],
+    // "lib": ["es6"],
     "include": ["./src/**/*", "./test/**/*"],
     // "exclude": ["node_modules"]
 }
