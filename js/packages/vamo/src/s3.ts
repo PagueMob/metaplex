@@ -4,7 +4,8 @@ import log from 'loglevel';
 const s3 = new AwsS3({
   region: 'us-east-1'
 })
-export const putObject = (bucket: string, key: string, body: string) => {
+
+export const putObject = (bucket, key, body) => {
   let params = {
     Bucket: bucket,
     Key: key,
@@ -12,8 +13,9 @@ export const putObject = (bucket: string, key: string, body: string) => {
     ContentType: `application/json; charset=utf-8`
   }
   return new Promise((resolve, reject) => {
-    log.debug(`s3: ${JSON.stringify(s3)}`);
+    log.debug(JSON.stringify(s3));
     log.debug(`S3 request key: ${key}`)
+    
     s3.putObject(params, (err, data) => {
       if (err) {
         return reject(err)
