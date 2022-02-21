@@ -1,0 +1,43 @@
+// {
+//     "compilerOptions": {
+//       "target": "es6",
+//       "outDir": "dist",
+//       "lib": ["dom", "dom.iterable"],
+//       "allowJs": true,
+//       "skipLibCheck": true,
+//       "esModuleInterop": true,
+//       "allowSyntheticDefaultImports": true,
+//       "forceConsistentCasingInFileNames": true,
+//       "noFallthroughCasesInSwitch": true,
+//       "module": "es6",
+//       "moduleResolution": "node",
+//       "noImplicitAny": false,
+//       "resolveJsonModule": true,
+//       "isolatedModules": true,
+//       "downlevelIteration": true,
+//       "noEmit": true,
+//       "jsx": "preserve",
+//       "typeRoots": ["../../types"]
+//     },
+//     "include": ["src","test"],
+//     "exclude": ["node_modules"]
+//   }
+
+
+  {
+    "compilerOptions": {
+        "module": "es6",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "target": "es6",
+        "jsx": "react",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "baseUrl": "src",
+        "outDir": "dist"
+    },
+    "lib": ["es6"],
+    "include": ["./src/**/*", "./test/**/*"],
+    // "exclude": ["node_modules"]
+}
+  

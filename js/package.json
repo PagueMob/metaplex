@@ -5,7 +5,8 @@
       "packages/cli",
       "packages/common",
       "packages/gumdrop",
-      "packages/web"
+      "packages/web",
+      "packages/vamo"
     ]
   },
   "keywords": [],
@@ -17,7 +18,9 @@
     "bootstrap": "lerna link && lerna bootstrap",
     "build": "lerna run build --ignore=token-entangler --ignore=candy-machine-ui",
     "build-web": "lerna run build --stream --scope @oyster/common --scope web",
+    "build-vamo": "lerna run build --stream --scope @oyster/common --scope web --scope vamo",
     "start": "cross-env CI=true lerna run start --scope @oyster/common --stream --parallel --scope web",
+    "start-vamo": "cross-env CI=true lerna run start --scope @oyster/common --scope @metaplex/cli --stream --parallel --scope vamo",
     "lint": "prettier -c 'packages/*/{src,test}/**/*.{ts,tsx}' && npm run lint:eslint",
     "lint:eslint": "eslint 'packages/*/{src,test}/**/*.{ts,tsx}'",
     "lint:fix": "prettier --write 'packages/*/{src,test}/**/*.{ts,tsx}' && eslint --fix 'packages/*/{src,test}/**/*.{ts,tsx}'",
