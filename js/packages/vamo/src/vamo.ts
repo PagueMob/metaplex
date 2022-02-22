@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import log from 'loglevel';
-import {  MetadataJsonAttribute, NodeWallet } from '@metaplex/js';
+import { MetadataJsonAttribute, NodeWallet } from '@metaplex/js';
 import { putObject } from './s3.js';
 import * as anchor from '@project-serum/anchor';
 import * as web3 from "@solana/web3.js";
@@ -29,14 +29,14 @@ export async function createNftLotRequest(eventId: number,
 
     const targetEnv = process.env.env_target || 'devnet'; // devnet, testnet, mainnet-beta
     const connection = new anchor.web3.Connection(getCluster(targetEnv));
-    const wallet = loadWallet(process.env.wallet_keypair)
+    const wallet = loadWallet(process.env.wallet_keypair!)
     const walletPub = wallet.publicKey.toBase58();
-    
+
     const balance = await connection.getBalance(wallet.publicKey);
-    log.debug(`balance ${balance/1e9}`);
+    log.debug(`balance ${balance / 1e9}`);
 
     attributes.push({ trait_type: "eventId", value: eventId.toString() });
-    
+
     const metadadata = buildMetadata(imageArtType, imageArtUrl, walletPub, creatorWalletAddr, creatorName, ticketName, description, attributes);
     const metadataJson = JSON.stringify(metadadata);
     log.debug(`metadata ${metadataJson}`);
@@ -60,9 +60,8 @@ function getCluster(name: string): string {
         return 'https://api.metaplex.solana.com/';
     } else if (name == 'testnet') {
         web3.clusterApiUrl('testnet')
-    } else {
-        return web3.clusterApiUrl('devnet');
     }
+    return web3.clusterApiUrl('devnet');
 }
 
 async function storeMetadata(ticketName: string, eventId: number, metadataJson: string) {
