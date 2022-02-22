@@ -5,6 +5,8 @@ import { putObject } from './s3.js';
 import * as anchor from '@project-serum/anchor';
 import * as web3 from "@solana/web3.js";
 import fs from "fs";
+// import {mintNFT} from './actions/nft.js';
+import { ENDPOINT_NAME } from "@oyster/common/dist/lib/contexts/connection";
 
 setupLog();
 
@@ -41,6 +43,9 @@ export async function createNftLotRequest(eventId: number,
     const metadataJson = JSON.stringify(metadadata);
     log.debug(`metadata ${metadataJson}`);
     const metadataUri = await storeMetadata(ticketName, eventId, metadataJson);
+
+    // const mintResponse = await mintNFT(connection,wallet,getEndpointName(targetEnv),[],metadadata,metadataUri,quantity);
+    // log.debug(`mintResponse ${mintResponse}`);
 
     return "createNftLotRequest end";
 }
@@ -99,4 +104,13 @@ function buildMetadata(imageArtType: string, imageArtUrl: string, adminWallet: s
             { address: creatorWalletAddr, share: 50, verified: true },
         ]
     };
+}
+
+function getEndpointName(name: string): ENDPOINT_NAME {
+    if (name == 'mainnet-beta') {
+        return 'mainnet-beta';
+    } else if (name == 'testnet') {
+        return 'testnet';
+    }
+    return 'devnet';
 }

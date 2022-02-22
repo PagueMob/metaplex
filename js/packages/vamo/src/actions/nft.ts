@@ -1,20 +1,3 @@
-import {
-  Attribute,
-  createAssociatedTokenAccountInstruction,
-  createMasterEditionV3,
-  createMetadataV2,
-  updateMetadataV2,
-  createMint,
-  Creator,
-  ENDPOINT_NAME,
-  findProgramAddress,
-  getAssetCostToStore,
-  programIds,
-  sendTransactionWithRetry,
-  StringPublicKey,
-  toPublicKey,
-  WalletSigner,
-} from '@oyster/common';
 import { MintLayout, Token } from '@solana/spl-token';
 import {
   Connection,
@@ -32,6 +15,15 @@ import {
   DataV2,
   Uses,
 } from '@metaplex-foundation/mpl-token-metadata';
+import { WalletSigner } from '@oyster/common/dist/lib/contexts/wallet.js';
+import { ENDPOINT_NAME, sendTransactionWithRetry } from '@oyster/common/dist/lib/contexts/connection';
+import { Creator, Attribute, createMetadataV2, updateMetadataV2, createMasterEditionV3 } from '@oyster/common/dist/lib/actions/metadata';
+import { StringPublicKey, toPublicKey } from '@oyster/common/dist/lib/utils/ids';
+import { createAssociatedTokenAccountInstruction, createMint } from '@oyster/common/dist/lib/actions/account';
+import { findProgramAddress } from '@oyster/common/dist/lib/utils/utils';
+import { programIds } from '@oyster/common/dist/lib/utils/programIds';
+import { getAssetCostToStore } from '@oyster/common/dist/lib/utils/assets';
+
 
 const RESERVED_METADATA = 'metadata.json';
 
