@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
-    "outDir": "./../build",
+    "outDir": "./build",
     "declaration": false,
     "esModuleInterop": true,
     "noImplicitAny": false,
@@ -11,13 +11,16 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
     "noLib": false,
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "lib": ["dom", "es2019"],
-    "types": ["jest", "node", "webgl2", "offscreencanvas"]
+    "types": ["jest", "node", "webgl2", "offscreencanvas"],
+    // "jsx": "react-jsx",
   },
+  // "include": [".*", "../../../../node_modules/@oyster"],
   "exclude": ["node_modules", "typings/browser", "typings/browser.d.ts"],
   "atom": {
     "rewriteTsconfig": false
