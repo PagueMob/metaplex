@@ -4,7 +4,8 @@ import fs from "fs";
 import { putObject } from './s3.js';
 import * as anchor from '@project-serum/anchor';
 import * as web3 from "@solana/web3.js";
-
+import { mintNFT } from './nft2';
+import { ENDPOINT_NAME } from '../index.js';
 
 config();
 
@@ -15,6 +16,7 @@ vamoStart();
 export async function vamoStart() {
     log.debug(`start`);
     const targetEnv = process.env.env_target || 'devnet'; // devnet, testnet, mainnet-beta
+    const endpointName = getEndpointName(targetEnv);
     const connection = new anchor.web3.Connection(getCluster(targetEnv));
     const walletKeypair = loadKeypair(process.env.wallet_keypair!);
     const wallet = loadWallet(process.env.wallet_keypair!)
@@ -25,8 +27,17 @@ export async function vamoStart() {
     const metadataUri = "";
     const quantity = 100;
 
-    // const mintResponse = await mintNFT(connection,wallet,endpointName,[],metadadata,metadataUri,quantity);
-    // log.debug(`mintResponse ${mintResponse}`);
+    const mintResponse = await mintNFT(connection,wallet,endpointName,[],metadadata,metadataUri,quantity);
+    log.debug(`mintResponse ${JSON.stringify(mintResponse)}`);
+}
+
+function getEndpointName(name: string): ENDPOINT_NAME {
+    if (name == 'mainnet-beta') {
+        return 'mainnet-beta';
+    } else if (name == 'testnet') {
+        return 'testnet';
+    }
+    return 'devnet';
 }
 
 interface MetadataJsonAttribute {
