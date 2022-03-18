@@ -77,10 +77,8 @@ export async function awsUpload(
   const updatedManifestBuffer = Buffer.from(JSON.stringify(manifestJson));
 
   const extensionRegex = new RegExp(`${path.extname(image)}$`);
-  const metadataFilename = image.replace(extensionRegex, '.json');
   var jsonPath = `${eventId}/${lotId}/json/${basename(image)}`;
   jsonPath = jsonPath.replace(extensionRegex, '.json');
-  log.debug('metadataFilename: ', metadataFilename);
   log.debug('jsonPath', jsonPath);
   const metadataUrl = await uploadFile(
     s3Client,
