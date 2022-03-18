@@ -28,13 +28,15 @@ async function uploadFile(
     log.debug('Error', err);
   }
 
-  const url = `https://${awsS3Bucket}.s3.amazonaws.com/${filename}`;
+  const url = `https://${awsS3Bucket}/${filename}`;
   log.debug('Location:', url);
   return url;
 }
 
 export async function awsUpload(
   awsS3Bucket: string,
+  eventId: number,
+  lotId: number,
   image: string,
   animation: string,
   manifestBuffer: Buffer,
@@ -43,7 +45,7 @@ export async function awsUpload(
   const s3Client = new S3Client({ region: REGION });
 
   async function uploadMedia(media) {
-    const mediaPath = `assets/${basename(media)}`;
+    const mediaPath = `${eventId}/${lotId}/media/${basename(media)}`;
     log.debug('media:', media);
     log.debug('mediaPath:', mediaPath);
     const mediaFileStream = createReadStream(media);
@@ -75,11 +77,13 @@ export async function awsUpload(
   const updatedManifestBuffer = Buffer.from(JSON.stringify(manifestJson));
 
   const extensionRegex = new RegExp(`${path.extname(image)}$`);
-  const metadataFilename = image.replace(extensionRegex, '.json');
+  var jsonPath = `${eventId}/${lotId}/json/${basename(image)}`;
+  jsonPath = jsonPath.replace(extensionRegex, '.json');
+  log.debug('jsonPath', jsonPath);
   const metadataUrl = await uploadFile(
     s3Client,
     awsS3Bucket,
-    metadataFilename,
+    jsonPath,
     'application/json',
     updatedManifestBuffer,
   );

@@ -39,6 +39,8 @@ export async function uploadV2({
   nftStorageKey,
   ipfsCredentials,
   awsS3Bucket,
+  eventId,
+  lotId,
   batchSize,
   price,
   treasuryWallet,
@@ -66,6 +68,8 @@ export async function uploadV2({
   nftStorageKey: string;
   ipfsCredentials: ipfsCreds;
   awsS3Bucket: string;
+  eventId: number,
+  lotId: number,
   batchSize: number;
   price: BN;
   treasuryWallet: PublicKey;
@@ -320,6 +324,8 @@ export async function uploadV2({
               case StorageType.Aws:
                 [link, imageLink, animationLink] = await awsUpload(
                   awsS3Bucket,
+                  eventId,
+                  lotId,
                   image,
                   animation,
                   manifestBuffer,
@@ -616,6 +622,8 @@ type UploadParams = {
   rpcUrl: string;
   ipfsCredentials: ipfsCreds;
   awsS3Bucket: string;
+  eventId: number;
+  lotId: number;
   arweaveJwk: string;
   batchSize: number;
 };
@@ -628,6 +636,8 @@ export async function upload({
   rpcUrl,
   ipfsCredentials,
   awsS3Bucket,
+  eventId,
+  lotId,
   arweaveJwk,
   batchSize,
 }: UploadParams): Promise<boolean> {
@@ -747,6 +757,8 @@ export async function upload({
                   case StorageType.Aws:
                     [link, imageLink, animationLink] = await awsUpload(
                       awsS3Bucket,
+                      eventId,
+                      lotId,
                       image,
                       animation,
                       manifestBuffer,

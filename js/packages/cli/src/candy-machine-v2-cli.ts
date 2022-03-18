@@ -100,6 +100,14 @@ programCommand('upload')
     'JSON file with candy machine settings',
   )
   .option(
+    '-ei, --event-id <number>',
+    'event id',
+  )
+  .option(
+    '-li, --lot-id <number>',
+    'lot id',
+  )
+  .option(
     '-r, --rpc-url <string>',
     'custom rpc url since this is a heavy command',
   )
@@ -123,6 +131,8 @@ programCommand('upload')
       env,
       cacheName,
       configPath,
+      eventId,
+      lotId,
       rpcUrl,
       rateLimit,
       collectionMint,
@@ -191,6 +201,17 @@ programCommand('upload')
         'aws selected as storage option but existing bucket name (--aws-s3-bucket) not provided.',
       );
     }
+    if (storage === StorageType.Aws && !eventId) {
+      throw new Error(
+        'aws selected as storage option but event id (--event-id) not provided.',
+      );
+    }
+    if (storage === StorageType.Aws && !lotId) {
+      throw new Error(
+        'aws selected as storage option but lot id (--lot-id) not provided.',
+      );
+    }
+
 
     if (!Object.values(StorageType).includes(storage)) {
       throw new Error(
@@ -272,6 +293,8 @@ programCommand('upload')
         nftStorageKey,
         ipfsCredentials,
         awsS3Bucket,
+        eventId,
+        lotId,
         batchSize,
         price,
         treasuryWallet,
