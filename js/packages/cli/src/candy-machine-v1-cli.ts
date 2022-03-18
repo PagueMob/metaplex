@@ -84,6 +84,14 @@ programCommand('update_config_account')
     '(existing) AWS S3 Bucket name (required if using aws)',
   )
   .option(
+    '-ei, --event-id <number>',
+    'event id',
+  )
+  .option(
+    '-li, --lot-id <number>',
+    'lot id',
+  )
+  .option(
     '--arweave-jwk <string>',
     'Path to Arweave wallet file (required if using Arweave Bundles (--storage arweave-bundle)',
   )
@@ -101,6 +109,8 @@ programCommand('update_config_account')
       ipfsInfuraProjectId,
       ipfsInfuraSecret,
       awsS3Bucket,
+      eventId,
+      lotId,
       rpcUrl,
       arweaveJwk,
       batchSize,
@@ -202,6 +212,8 @@ programCommand('update_config_account')
         rpcUrl,
         ipfsCredentials,
         awsS3Bucket,
+        eventId,
+        lotId,
         arweaveJwk,
         batchSize,
       });
