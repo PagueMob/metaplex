@@ -17,7 +17,7 @@ import { loadCache, saveCache } from '../helpers/cache';
 import { arweaveUpload } from '../helpers/upload/arweave';
 import {
   makeArweaveBundleUploadGenerator,
-  withdraw_bundlr,
+  withdrawBundlr,
 } from '../helpers/upload/arweave-bundle';
 import { awsUpload } from '../helpers/upload/aws';
 import { ipfsCreds, ipfsUpload } from '../helpers/upload/ipfs';
@@ -26,6 +26,7 @@ import { StorageType } from '../helpers/storage-type';
 import { AssetKey } from '../types';
 import { chunks, sleep } from '../helpers/various';
 import { nftStorageUpload } from '../helpers/upload/nft-storage';
+import { pinataUpload } from '../helpers/upload/pinata';
 import { setCollection } from './set-collection';
 
 export async function uploadV2({
@@ -38,6 +39,8 @@ export async function uploadV2({
   mutable,
   nftStorageKey,
   ipfsCredentials,
+  pinataJwt,
+  pinataGateway,
   awsS3Bucket,
   eventId,
   lotId,
@@ -57,6 +60,7 @@ export async function uploadV2({
   rateLimit,
   collectionMintPubkey,
   setCollectionMint,
+  rpcUrl,
 }: {
   files: string[];
   cacheName: string;
@@ -67,6 +71,8 @@ export async function uploadV2({
   mutable: boolean;
   nftStorageKey: string;
   ipfsCredentials: ipfsCreds;
+  pinataJwt: string;
+  pinataGateway: string;
   awsS3Bucket: string;
   eventId: number,
   lotId: number,
@@ -98,6 +104,7 @@ export async function uploadV2({
   rateLimit: number;
   collectionMintPubkey: null | PublicKey;
   setCollectionMint: boolean;
+  rpcUrl: null | string;
 }): Promise<boolean> {
   const savedContent = loadCache(cacheName, env);
   const cacheContent = savedContent || {};
@@ -182,8 +189,7 @@ export async function uploadV2({
           collectionMintPubkey,
         );
         console.log('Collection: ', collection);
-        cacheContent.program.collection =
-          collection.collectionMetadata.toBase58();
+        cacheContent.program.collection = collection.collectionMetadata;
       } else {
         console.log('No collection set');
       }
@@ -234,31 +240,29 @@ export async function uploadV2({
           : undefined,
         storage === StorageType.ArweaveSol ? walletKeyPair : undefined,
         batchSize,
+        rpcUrl,
       );
 
-      let result = arweaveBundleUploadGenerator.next();
       // Loop over every uploaded bundle of asset filepairs (PNG + JSON)
       // and save the results to the Cache object, persist it to the Cache file.
-      while (!result.done) {
-        const { cacheKeys, arweavePathManifestLinks, updatedManifests } =
-          await result.value;
+      for await (const value of arweaveBundleUploadGenerator) {
+        const { cacheKeys, arweavePathManifestLinks, updatedManifests } = value;
 
         updateCacheAfterUpload(
           cacheContent,
           cacheKeys,
           arweavePathManifestLinks,
-          updatedManifests,
+          updatedManifests.map(m => m.name),
         );
 
         saveCache(cacheName, env, cacheContent);
         log.info('Saved bundle upload result to cache.');
-        result = arweaveBundleUploadGenerator.next();
       }
       log.info('Upload done. Cleaning up...');
       if (storage === StorageType.ArweaveSol && env !== 'devnet') {
         log.info('Waiting 5 seconds to check Bundlr balance.');
         await sleep(5000);
-        await withdraw_bundlr(walletKeyPair);
+        await withdrawBundlr(walletKeyPair);
       }
     } else {
       const progressBar = new cliProgress.SingleBar(
@@ -303,6 +307,15 @@ export async function uploadV2({
           let link, imageLink, animationLink;
           try {
             switch (storage) {
+              case StorageType.Pinata:
+                [link, imageLink, animationLink] = await pinataUpload(
+                  image,
+                  animation,
+                  manifestBuffer,
+                  pinataJwt,
+                  pinataGateway,
+                );
+                break;
               case StorageType.NftStorage:
                 [link, imageLink, animationLink] = await nftStorageUpload(
                   image,
@@ -349,6 +362,7 @@ export async function uploadV2({
               log.debug('Updating cache for ', asset.index);
               cacheContent.items[asset.index] = {
                 link,
+                imageLink,
                 name: manifest.name,
                 onChain: false,
               };
@@ -602,12 +616,12 @@ function updateCacheAfterUpload(
   cache: Cache,
   cacheKeys: Array<keyof Cache['items']>,
   links: string[],
-  manifests: Manifest[],
+  names: string[],
 ) {
   cacheKeys.forEach((cacheKey, idx) => {
     cache.items[cacheKey] = {
       link: links[idx],
-      name: manifests[idx].name,
+      name: names[idx],
       onChain: false,
     };
   });
@@ -700,21 +714,19 @@ export async function upload({
         batchSize,
       );
 
-      let result = arweaveBundleUploadGenerator.next();
       // Loop over every uploaded bundle of asset filepairs (PNG + JSON)
       // and save the results to the Cache object, persist it to the Cache file.
-      while (!result.done) {
-        const { cacheKeys, arweavePathManifestLinks, updatedManifests } =
-          await result.value;
+      for await (const value of arweaveBundleUploadGenerator) {
+        const { cacheKeys, arweavePathManifestLinks, updatedManifests } = value;
+
         updateCacheAfterUpload(
           cache,
           cacheKeys,
           arweavePathManifestLinks,
-          updatedManifests,
+          updatedManifests.map(m => m.name),
         );
         saveCache(cacheName, env, cache);
         log.info('Saved bundle upload result to cache.');
-        result = arweaveBundleUploadGenerator.next();
       }
       log.info('Upload done.');
     } else {
