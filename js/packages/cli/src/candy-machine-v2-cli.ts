@@ -145,6 +145,7 @@ programCommand('upload')
     const {
       storage,
       nftStorageKey,
+      nftStorageGateway,
       ipfsInfuraProjectId,
       number,
       ipfsInfuraSecret,
@@ -297,6 +298,7 @@ programCommand('upload')
         retainAuthority,
         mutable,
         nftStorageKey,
+        nftStorageGateway,
         ipfsCredentials,
         pinataJwt,
         pinataGateway,
